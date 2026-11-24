@@ -43,7 +43,7 @@ if(lf){
     cards.forEach(c=>{const d=c.dataset,p=+d.price||0;
       const ok=(stage==='all'||(stage==='sale'&&d.status==='sale')||(stage==='rent'&&d.status==='rent')||(stage==='offplan'&&d.stage==='offplan'))
         &&(!f.area||d.area===f.area)&&(!f.type||d.type===f.type)
-        &&(!beds||(beds==='4'?+d.beds>=4:d.beds===beds))
+        &&(!beds||(d.beds!==''&&(beds==='4'?+d.bedsmax>=4:(+d.beds<=+beds&&+d.bedsmax>=+beds))))
         &&(!p||(p>=min&&p<=max))&&(p||(!f.min&&!f.max));
       c.hidden=!ok;if(ok)n++});
     count.textContent=n+(n===1?' property':' properties');empty.hidden=n>0;

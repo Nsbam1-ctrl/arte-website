@@ -8,6 +8,7 @@ LAYOUT: full-bleed bands, search panel sitting on the waterline, 1240px content,
 :root{color-scheme:dark;--bg:#101417;--s1:#161b1f;--s2:#1d2328;--line:#2b3238;--ink:#ece6dc;--mute:#a6a29a;--sand:#d6c2a0;--acc:#e2725b;--acc2:#f0957f;--r:14px;--f-t:"Cormorant Garamond","Cormorant",Georgia,serif;--f-b:"Jost",system-ui,sans-serif}
 :root[data-theme=light],:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
+[hidden]{display:none!important}
 html{scroll-padding-top:84px;-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:300 17px/1.6 var(--f-b);overflow-x:clip}b,strong{font-weight:500}
 img{max-width:100%;display:block}

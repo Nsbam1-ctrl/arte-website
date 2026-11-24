@@ -224,7 +224,7 @@ BEDS_OPT = [("", "Any beds"), ("1", "1 bed"), ("2", "2 beds"), ("3", "3 beds"), 
 def card(l):
     badge = f'<span class="badge op">{"Off-plan resale" if l.get("source")=="propertyfinder" else "New launch"}</span>' if l["stage"] == "offplan" else f'<span class="badge">{"For rent" if l["status"]=="rent" else "For sale"}</span>'
     dev = f' · {e(l["developer"])}' if l.get("developer") else ""
-    return (f'<a class="card reveal" href="property-{l["slug"]}.html" data-listing data-status="{l["status"]}" data-stage="{l["stage"]}" data-area="{e(l["area"])}" data-type="{e(l["type"])}" data-beds="{l.get("beds") if l.get("beds") is not None else ""}" data-price="{l["price"] or ""}">'
+    return (f'<a class="card reveal" href="property-{l["slug"]}.html" data-listing data-status="{l["status"]}" data-stage="{l["stage"]}" data-area="{e(l["area"])}" data-type="{e(l["type"])}" data-beds="{l.get("beds") if l.get("beds") is not None else ""}" data-bedsmax="{l.get("beds_max") or (l.get("beds") if l.get("beds") is not None else "")}" data-price="{l["price"] or ""}">'
             f'<div class="ph">{photo(l, thumb=True)}{badge}</div><div class="bd">{price_html(l)}<h3 style="margin:0;font-size:23px">{e(l["title"])}</h3>'
             f'<div class="where">{e(l["building"])}, {e(l["area"])}{dev}</div><div class="specs">{specs(l)}</div></div></a>')
 
