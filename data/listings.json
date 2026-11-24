@@ -644,7 +644,8 @@
   "source": "reelly",
   "price_from": true,
   "baths": null,
-  "permit": ""
+  "permit": "",
+  "signature": true
  },
  {
   "slug": "sobha-solis-motor-city",
@@ -791,6 +792,306 @@
   "source": "reelly",
   "images": [
    "https://reelly-backend.s3.amazonaws.com/projects/3989/images/16f4bbc6ee934960abf48620d279a73d.webp"
+  ]
+ },
+ {
+  "slug": "orla-dorchester-collection-palm",
+  "status": "sale",
+  "stage": "offplan",
+  "source": "reelly",
+  "signature": true,
+  "title": "ORLA, Dorchester Collection",
+  "building": "Orla Dorchester Collection",
+  "developer": "Omniyat",
+  "area": "Palm Jumeirah",
+  "area_slug": "",
+  "type": "Apartment",
+  "beds": 4,
+  "beds_max": null,
+  "baths": null,
+  "sqft": 7352,
+  "price": 57230250,
+  "price_from": true,
+  "handover": "December 2026",
+  "highlights": [
+   "86 residences, 3 sky palaces, 2 mansions",
+   "Beachfront on Palm Jumeirah",
+   "Serviced by Dorchester Collection"
+  ],
+  "summary": "An ultra-private beachfront address by OMNIYAT on Palm Jumeirah: just 86 residences, three sky palaces and two mansions, with hospitality by Dorchester Collection.",
+  "permit": "",
+  "images": [
+   "https://reelly-backend.s3.amazonaws.com/vault/ZZLvFZFt/711gxYOlATlz-Otxz2HF6yKqYhU/GerwEw/13.jpg"
+  ]
+ },
+ {
+  "slug": "vela-dorchester-collection-business-bay",
+  "status": "sale",
+  "stage": "offplan",
+  "source": "reelly",
+  "signature": true,
+  "title": "VELA, Dorchester Collection",
+  "building": "Vela Dorchester Collection",
+  "developer": "Omniyat",
+  "area": "Business Bay",
+  "area_slug": "",
+  "type": "Apartment",
+  "beds": 3,
+  "beds_max": 4,
+  "baths": null,
+  "sqft": 6361,
+  "price": 43330140,
+  "price_from": true,
+  "handover": "December 2027",
+  "highlights": [
+   "On the water at Marasi Bay",
+   "Managed by Dorchester Collection",
+   "Downtown and Burj Khalifa views"
+  ],
+  "summary": "OMNIYAT's waterfront tower on Marasi Bay, run by Dorchester Collection, with full-floor style residences looking back to Burj Khalifa.",
+  "permit": "",
+  "images": [
+   "https://reelly-backend.s3.amazonaws.com/vault/ZZLvFZFt/vEssovvWQXSh-APRxYmS0KJQ9ak/EQJ-sw/23.jpg"
+  ]
+ },
+ {
+  "slug": "armani-beach-residence-palm",
+  "status": "sale",
+  "stage": "offplan",
+  "source": "reelly",
+  "signature": true,
+  "title": "Armani Beach Residences",
+  "building": "Armani Beach Residence",
+  "developer": "Arada",
+  "area": "Palm Jumeirah",
+  "area_slug": "",
+  "type": "Apartment",
+  "beds": 2,
+  "beds_max": 5,
+  "baths": null,
+  "sqft": 2623,
+  "price": 23000000,
+  "price_from": true,
+  "handover": "December 2027",
+  "highlights": [
+   "Architecture by Tadao Ando",
+   "Interiors by Armani/Casa",
+   "Private beach on Palm Jumeirah"
+  ],
+  "summary": "Arada's beachfront building on Palm Jumeirah, the first in Dubai designed by Tadao Ando, with interiors by Armani/Casa.",
+  "permit": "",
+  "images": [
+   "https://reelly-backend.s3.amazonaws.com/vault/ZZLvFZFt/9eZTplVTFHjZUkBaBj1Rs4MIFRE/O_tyAw/2.jpg"
+  ]
+ },
+ {
+  "slug": "ritz-carlton-residences-business-bay",
+  "status": "sale",
+  "stage": "offplan",
+  "source": "reelly",
+  "signature": true,
+  "title": "The Ritz-Carlton Residences",
+  "building": "The Ritz-Carlton Residences",
+  "developer": "Kappa Acca Real Estate Development",
+  "area": "Business Bay",
+  "area_slug": "",
+  "type": "Apartment",
+  "beds": 3,
+  "beds_max": 6,
+  "baths": null,
+  "sqft": 3385,
+  "price": 19600000,
+  "price_from": true,
+  "handover": "June 2027",
+  "highlights": [
+   "Serviced by The Ritz-Carlton",
+   "On the Dubai Water Canal",
+   "Three to six-bedroom homes"
+  ],
+  "summary": "Branded residences on the Dubai Water Canal in Business Bay, managed and serviced by The Ritz-Carlton.",
+  "permit": "",
+  "images": [
+   "https://reelly-backend.s3.amazonaws.com/projects/81/images/6ac60ac38acb4bc0b823189c2055fb3f.webp"
+  ]
+ },
+ {
+  "slug": "bugatti-residences-business-bay",
+  "status": "sale",
+  "stage": "offplan",
+  "source": "reelly",
+  "signature": true,
+  "title": "Bugatti Residences by Binghatti",
+  "building": "Bugatti Residences by Binghatti",
+  "developer": "Binghatti",
+  "area": "Business Bay",
+  "area_slug": "",
+  "type": "Apartment",
+  "beds": 2,
+  "beds_max": 5,
+  "baths": null,
+  "sqft": 2023,
+  "price": 19250000,
+  "price_from": true,
+  "handover": "February 2027",
+  "highlights": [
+   "Riviera-inspired wave façade",
+   "Two to five-bedroom residences",
+   "Penthouses with private pools"
+  ],
+  "summary": "Binghatti's collaboration with Bugatti in Business Bay: a sculpted canal-side tower of residences and penthouses inspired by the French Riviera.",
+  "permit": "",
+  "images": [
+   "https://reelly-backend.s3.amazonaws.com/vault/ZZLvFZFt/PAe8EUfCGjEmU21sEvfnQL6TPlo/jqE6UQ/BUGATTI%20RESIDENCES%20BY%20BINGHATTI%20_C8.jpg"
+  ]
+ },
+ {
+  "slug": "alba-residences-omniyat-palm",
+  "status": "sale",
+  "stage": "offplan",
+  "source": "reelly",
+  "signature": true,
+  "title": "The Alba Residences",
+  "building": "The Alba Residences by Omniyat",
+  "developer": "Omniyat",
+  "area": "Palm Jumeirah",
+  "area_slug": "",
+  "type": "Apartment",
+  "beds": 2,
+  "beds_max": 4,
+  "baths": null,
+  "sqft": 1518,
+  "price": 18225000,
+  "price_from": true,
+  "handover": "December 2028",
+  "highlights": [
+   "Architecture by Zaha Hadid Architects",
+   "Palm Jumeirah beachfront",
+   "Apartments and duplexes"
+  ],
+  "summary": "OMNIYAT's beachfront retreat on Palm Jumeirah, designed by Zaha Hadid Architects, with apartments and duplexes looking out to sea.",
+  "permit": "",
+  "images": [
+   "https://reelly-backend.s3.amazonaws.com/vault/ZZLvFZFt/c_T4PWnaviMgzK8UyIaWgGYZE44/lzpq8Q/cover.jpg"
+  ]
+ },
+ {
+  "slug": "jumeirah-asora-bay",
+  "status": "sale",
+  "stage": "offplan",
+  "source": "reelly",
+  "signature": true,
+  "title": "Jumeirah Asora Bay",
+  "building": "Jumeirah Asora Bay",
+  "developer": "Meraas",
+  "area": "La Mer, Jumeirah",
+  "area_slug": "",
+  "type": "Villa",
+  "beds": 7,
+  "beds_max": null,
+  "baths": null,
+  "sqft": 26953,
+  "price": 350000000,
+  "price_from": true,
+  "handover": "June 2029",
+  "highlights": [
+   "Mansions and penthouses by the sea",
+   "Jumeirah-branded living",
+   "Private coastal enclave"
+  ],
+  "summary": "Meraas and Jumeirah's coastal enclave at La Mer: a small collection of sea-front mansions, penthouses and duplexes.",
+  "permit": "",
+  "images": [
+   "https://reelly-backend.s3.amazonaws.com/vault/ZZLvFZFt/yxteI7j7WjmeMW1ZnPENtBm58_Q/ZQ4x4w/1.jpg"
+  ]
+ },
+ {
+  "slug": "solaya-port-de-la-mer",
+  "status": "sale",
+  "stage": "offplan",
+  "source": "reelly",
+  "signature": true,
+  "title": "Solaya",
+  "building": "Solaya",
+  "developer": "Meraas",
+  "area": "La Mer, Jumeirah",
+  "area_slug": "",
+  "type": "Apartment",
+  "beds": 3,
+  "beds_max": 5,
+  "baths": null,
+  "sqft": 6067,
+  "price": 40348000,
+  "price_from": true,
+  "handover": "December 2029",
+  "highlights": [
+   "Nine boutique beachfront buildings",
+   "Sea and skyline views",
+   "Penthouses available"
+  ],
+  "summary": "Meraas' beachfront collection of nine boutique buildings at Port de La Mer, arranged for sea and skyline views.",
+  "permit": "",
+  "images": [
+   "https://reelly-backend.s3.amazonaws.com/vault/ZZLvFZFt/Kzfv7OLAJZdHTlKjZbvYN5QR4-w/CPlA6Q/Solaya-Ext-01.png"
+  ]
+ },
+ {
+  "slug": "palm-jebel-ali-villas",
+  "status": "sale",
+  "stage": "offplan",
+  "source": "reelly",
+  "signature": true,
+  "title": "Palm Jebel Ali Villas",
+  "building": "Palm Jebel Ali Villas",
+  "developer": "Nakheel",
+  "area": "Palm Jebel Ali",
+  "area_slug": "",
+  "type": "Villa",
+  "beds": 5,
+  "beds_max": null,
+  "baths": null,
+  "sqft": 8335,
+  "price": 30812000,
+  "price_from": true,
+  "handover": "September 2027",
+  "highlights": [
+   "Beachfront frond villas",
+   "Each frond a private neighbourhood",
+   "By Nakheel"
+  ],
+  "summary": "Nakheel's beachfront villas on Palm Jebel Ali, where each frond is laid out as a private, landscaped neighbourhood.",
+  "permit": "",
+  "images": [
+   "https://reelly-backend.s3.amazonaws.com/vault/ZZLvFZFt/hpwSBe1WMBOua0ENcDXmM_HmlS4/ZvJojA/4.jpg"
+  ]
+ },
+ {
+  "slug": "taraf-karl-lagerfeld-villas",
+  "status": "sale",
+  "stage": "offplan",
+  "source": "reelly",
+  "signature": true,
+  "title": "Karl Lagerfeld Villas",
+  "building": "Taraf Karl Lagerfeld Villas",
+  "developer": "Taraf Holding",
+  "area": "Wadi Al Safa 3",
+  "area_slug": "",
+  "type": "Villa",
+  "beds": 6,
+  "beds_max": 7,
+  "baths": null,
+  "sqft": 11345,
+  "price": 25584000,
+  "price_from": true,
+  "handover": "June 2027",
+  "highlights": [
+   "Designed with the Karl Lagerfeld house",
+   "Library inspired by his collection",
+   "Two interior styles"
+  ],
+  "summary": "Taraf's villas inspired by Karl Lagerfeld's Paris headquarters, with a signature library and a choice of two interior styles.",
+  "permit": "",
+  "images": [
+   "https://reelly-backend.s3.amazonaws.com/vault/ZZLvFZFt/gGPgY8WKWpgwHIVQ5DWrLI4-uao/ij1k7Q/Karl-Lagerfeld-X-Taraf-1.jpeg"
   ]
  }
 ]

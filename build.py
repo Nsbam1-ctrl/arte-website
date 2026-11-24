@@ -236,9 +236,10 @@ TYPES_OPT = [("", "Any type")] + sorted({(l["type"], l["type"]) for l in L})
 BEDS_OPT = [("", "Any beds"), ("1", "1 bed"), ("2", "2 beds"), ("3", "3 beds"), ("4", "4+ beds")]
 
 def card(l):
-    badge = f'<span class="badge op">{"Off-plan resale" if l.get("source")=="propertyfinder" else "New launch"}</span>' if l["stage"] == "offplan" else f'<span class="badge">{"For rent" if l["status"]=="rent" else "For sale"}</span>'
+    badge = '<span class="badge sig">Signature</span>' if l.get("signature") else None
+    badge = badge or f'<span class="badge op">{"Off-plan resale" if l.get("source")=="propertyfinder" else "New launch"}</span>' if l["stage"] == "offplan" else f'<span class="badge">{"For rent" if l["status"]=="rent" else "For sale"}</span>'
     dev = f' · {e(l["developer"])}' if l.get("developer") else ""
-    return (f'<a class="card reveal" href="property-{l["slug"]}.html" data-listing data-status="{l["status"]}" data-stage="{l["stage"]}" data-area="{e(l["area"])}" data-type="{e(l["type"])}" data-beds="{l.get("beds") if l.get("beds") is not None else ""}" data-bedsmax="{l.get("beds_max") or (l.get("beds") if l.get("beds") is not None else "")}" data-price="{l["price"] or ""}">'
+    return (f'<a class="card reveal" href="property-{l["slug"]}.html" data-listing data-status="{l["status"]}" data-stage="{l["stage"]}" data-area="{e(l["area"])}" data-type="{e(l["type"])}" data-beds="{l.get("beds") if l.get("beds") is not None else ""}" data-bedsmax="{l.get("beds_max") or (l.get("beds") if l.get("beds") is not None else "")}" data-price="{l["price"] or ""}" data-sig="{1 if l.get("signature") else 0}">'
             f'<div class="ph">{photo(l, thumb=True)}{badge}</div><div class="bd">{price_html(l)}<h3 style="margin:0;font-size:23px">{e(l["title"])}</h3>'
             f'<div class="where">{e(l["building"])}, {e(l["area"])}{dev}</div><div class="specs">{specs(l)}</div></div></a>')
 
@@ -292,6 +293,11 @@ home = f'''
 <div class="grid editorial">{"".join(card(l) for l in (sorted([x for x in L if x["status"]=="sale" and x.get("source")=="propertyfinder"], key=lambda x: -(x["price"] or 0))[:3] + sorted([x for x in L if x["status"]=="rent"], key=lambda x: -(x["price"] or 0))[:3]))}</div>
 </div></section>
 
+<section class="band sig-band"><div class="wrap">
+<div class="head-row"><div><p class="kicker">Signature</p><h2>Residences from AED 10 million</h2><p class="lead" style="margin:10px 0 0">Branded and beachfront homes by Dubai's most considered developers, shown privately and by appointment.</p></div><a class="btn ghost" href="listings.html?stage=signature">View the Signature collection</a></div>
+<div class="grid">{"".join(card(l) for l in [x for k in ("orla-dorchester-collection-palm","armani-beach-residence-palm","vela-dorchester-collection-business-bay") for x in L if x["slug"]==k])}</div>
+</div></section>
+
 <section class="band alt"><div class="wrap split">
 <div><p class="kicker">Book a property valuation</p><h2>Unlock your property's potential</h2>
 <p class="lead">Tell us about your home and we will come back within one working day with a price range based on recent sales and rents in your building and community.</p>
@@ -320,7 +326,7 @@ pages["index.html"] = page("index.html", "ARTÉ Properties | Luxury real estate 
 listing_body = f'''<section class="band" style="padding-bottom:24px"><div class="wrap">
 <p class="crumbs"><a href="index.html">Home</a> / Properties</p><h1>Properties in Dubai</h1>
 <p class="lead">Our homes for sale and rent, updated automatically, plus new off-plan launches from Dubai&#39;s leading developers. New stock arrives every week, so tell us what you are after if it is not here yet.</p>
-<div class="tabs" role="tablist"><button class="tab" role="tab" data-stage="all">All</button><button class="tab" role="tab" data-stage="sale">For sale</button><button class="tab" role="tab" data-stage="rent">For rent</button><button class="tab" role="tab" data-stage="offplan">Off-plan</button></div>
+<div class="tabs" role="tablist"><button class="tab" role="tab" data-stage="all">All</button><button class="tab" role="tab" data-stage="sale">For sale</button><button class="tab" role="tab" data-stage="rent">For rent</button><button class="tab" role="tab" data-stage="offplan">Off-plan</button><button class="tab tab-sig" role="tab" data-stage="signature">Signature</button></div>
 <form class="search" id="filter" style="max-width:none">{fld("area","Area",req=False,opts=AREAS_OPT)}{fld("type","Type",req=False,opts=TYPES_OPT)}{fld("beds","Bedrooms",req=False,opts=BEDS_OPT)}{fld("min","Min price (AED)","number",False,ph="Any")}{fld("max","Max price (AED)","number",False,ph="Any")}<button class="btn ghost" type="button" id="clear">Clear</button></form>
 <p class="mute" style="margin:18px 0 0" id="count" aria-live="polite"></p></div></section>
 <section class="band" style="padding-top:12px"><div class="wrap"><div class="grid">{"".join(card(l) for l in L)}</div>

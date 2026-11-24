@@ -34,14 +34,14 @@ if(lf){
   let init={};
   try{init=Object.fromEntries(new URLSearchParams(location.search))}catch(_){}
   if(!Object.keys(init).length){try{init=JSON.parse(sessionStorage.getItem('arte-filter')||'{}')}catch(_){}}
-  const h=location.hash.slice(1);if(['sale','rent','offplan','ready'].includes(h))init.stage=h;
+  const h=location.hash.slice(1);if(['sale','rent','offplan','ready','signature'].includes(h))init.stage=h;
   for(const[k,v]of Object.entries(init)){const el=lf.elements[k];if(el)el.value=v}
   setStage(init.stage||'all');
   const apply=()=>{
     const f=Object.fromEntries(new FormData(lf));
     const min=+f.min||0,max=+f.max||Infinity,beds=f.beds;let n=0;
     cards.forEach(c=>{const d=c.dataset,p=+d.price||0;
-      const ok=(stage==='all'||(stage==='sale'&&d.status==='sale')||(stage==='rent'&&d.status==='rent')||(stage==='offplan'&&d.stage==='offplan'))
+      const ok=(stage==='all'||(stage==='sale'&&d.status==='sale')||(stage==='rent'&&d.status==='rent')||(stage==='offplan'&&d.stage==='offplan')||(stage==='signature'&&d.sig==='1'))
         &&(!f.area||d.area===f.area)&&(!f.type||d.type===f.type)
         &&(!beds||(d.beds!==''&&(beds==='4'?+d.bedsmax>=4:(+d.beds<=+beds&&+d.bedsmax>=+beds))))
         &&(!p||(p>=min&&p<=max))&&(p||(!f.min&&!f.max));

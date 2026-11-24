@@ -177,3 +177,9 @@ footer a{text-decoration:none;display:block;padding:4px 0}footer a:hover{color:v
 
 .legal .brn{opacity:.55;margin-left:6px}
 .logo img{max-width:none;object-fit:contain}
+
+.badge.sig{background:rgba(16,20,23,.85);color:var(--sand);border-color:rgba(214,194,160,.6);letter-spacing:.04em}
+.tab-sig{border-color:rgba(214,194,160,.45);color:var(--sand)}
+.tab-sig[aria-selected=true]{background:var(--sand);color:#14110c;border-color:var(--sand)}
+.sig-band{background:linear-gradient(180deg,#0c0f11,#13110e);border-top:1px solid rgba(214,194,160,.18);border-bottom:1px solid rgba(214,194,160,.18)}
+.sig-band .card{background:#0f1214;border-color:rgba(214,194,160,.18)}
