@@ -11,6 +11,14 @@ S = json.loads((ROOT / "data/site.json").read_text())
 L = json.loads((ROOT / "data/listings.json").read_text())
 A = json.loads((ROOT / "data/areas.json").read_text())
 AREA = {a["slug"]: a for a in A}
+import datetime
+TODAY = datetime.date.today().isoformat()
+ORG_LD = {"@context": "https://schema.org", "@type": "RealEstateAgent", "@id": S["domain"] + "/#agency", "name": S["brand"], "legalName": S["legal_name"],
+          "url": S["domain"] + "/", "logo": S["domain"] + "/img/arte-logo-white.png", "image": S["domain"] + "/img/og-image.jpg",
+          "telephone": S["phone"], "email": S["email"], "priceRange": "AED 100,000 - AED 60,000,000",
+          "address": {"@type": "PostalAddress", "streetAddress": S["address"].split(", Business Bay")[0], "addressLocality": "Business Bay, Dubai", "addressRegion": "Dubai", "addressCountry": "AE"},
+          "areaServed": [{"@type": "City", "name": "Dubai"}] + [{"@type": "Place", "name": a["name"]} for a in A],
+          "sameAs": [S["instagram"], S["facebook"], S["linkedin"]]}
 e = lambda s: html.escape(str(s), quote=True)
 random.seed(1)
 
@@ -166,14 +174,20 @@ def wa_link(msg): return f'https://wa.me/{S["whatsapp"]}?text=' + re.sub(r"\s", 
 def page(path, title, desc, body, active="", jsonld=None, og_img=""):
     nav = "".join(f'<a href="{h}"{" aria-current=page" if h == active else ""}>{t}</a>' for h, t in NAV)
     canon = S["domain"] + "/" + ("" if path == "index.html" else path.replace(".html", ""))
-    ld = f'<script type="application/ld+json">{json.dumps(jsonld, ensure_ascii=False)}</script>' if jsonld else ""
+    lds = jsonld if isinstance(jsonld, list) else ([jsonld] if jsonld else [])
+    lds = lds + [ORG_LD]
+    if path not in ("index.html", "404.html"):
+        crumbs = [("Home", S["domain"] + "/"), (title.split(",")[0].split("|")[0].strip(), canon)]
+        lds.append({"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": i + 1, "name": n, "item": u} for i, (n, u) in enumerate(crumbs)]})
+    ld = "".join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>' for x in lds)
+    og_img = og_img or S["domain"] + "/img/og-image.jpg"
     orn = f' · RERA ORN {e(S["orn"])}' if S["orn"] else ""
     areas_links = "".join(f'<a href="area-{a["slug"]}.html">{e(a["name"])}</a>' for a in A[:5])
     full_title = title if "ARTÉ" in title else f"{title} | ARTÉ Properties"
     return f'''<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(full_title)}</title><meta name="description" content="{e(desc)}"><link rel="canonical" href="{e(canon)}">
-<meta property="og:title" content="{e(full_title)}"><meta property="og:description" content="{e(desc)}"><meta property="og:type" content="website"><meta property="og:url" content="{e(canon)}">{f'<meta property="og:image" content="{e(og_img)}">' if og_img else ''}
+<meta property="og:title" content="{e(full_title)}"><meta property="og:description" content="{e(desc)}"><meta property="og:type" content="website"><meta property="og:url" content="{e(canon)}"><meta property="og:image" content="{e(og_img)}"><meta property="og:site_name" content="ARTÉ Properties"><meta property="og:locale" content="en_AE"><meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#101417"><link rel="icon" href="img/favicon.png" type="image/png"><link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500;600&display=swap">
@@ -189,7 +203,7 @@ def page(path, title, desc, body, active="", jsonld=None, og_img=""):
 <div><h4>Area guides</h4>{areas_links}<a href="areas.html">All areas</a></div>
 <div><h4>Contact</h4><a href="tel:{e(S["phone_href"])}">{e(S["phone"])}</a><a href="mailto:{e(S["email"])}">{e(S["email"])}</a><a href="https://wa.me/{e(S["whatsapp"])}" target="_blank" rel="noopener">WhatsApp</a>
 <a href="{e(S["instagram"])}" target="_blank" rel="noopener">Instagram</a><a href="{e(S["facebook"])}" target="_blank" rel="noopener">Facebook</a><a href="{e(S["linkedin"])}" target="_blank" rel="noopener">LinkedIn</a></div>
-</div><div class="legal"><span>© 2026 {e(S["legal_name"])}{orn}. Regulated by the Real Estate Regulatory Agency (RERA), Dubai.</span><a href="privacy.html" style="display:inline">Privacy</a></div></div></footer>
+</div><div class="legal"><span>© 2026 {e(S["legal_name"])}{orn}. Regulated by the Real Estate Regulatory Agency (RERA), Dubai. <span class="brn">BRN {e(S["director"]["brn"])}</span></span><a href="privacy.html" style="display:inline">Privacy</a></div></div></footer>
 <a class="wa" href="https://wa.me/{e(S["whatsapp"])}" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">{WA_ICON}</a>
 <script src="app.js"></script></body></html>'''
 
@@ -262,7 +276,7 @@ valuation_form = form("valuation", contact_fields() +
     "Request my valuation")
 
 _hero = [x for x in sorted([x for x in L if x.get("source")=="propertyfinder" and x.get("images")], key=lambda x: -(x["price"] or 0) * (5 if x["status"]=="sale" else 60))][:3]
-hero_slides = '<div class="slides" aria-hidden="true">' + "".join(f'<img src="{e(x["images"][0])}" alt="" referrerpolicy="no-referrer" data-fallback style="animation-delay:{i*7}s">' for i, x in enumerate(_hero)) + '</div>'
+hero_slides = '<div class="slides" aria-hidden="true">' + "".join(f'<img src="{e(x["images"][0])}" alt="" referrerpolicy="no-referrer" data-fallback {"fetchpriority=high" if i == 0 else "loading=lazy"} style="animation-delay:{i*7}s">' for i, x in enumerate(_hero)) + '</div>'
 home = f'''
 <section class="hero hero-home">{skyline()}{hero_slides}<div class="wrap">
 <p class="kicker">Boutique real estate, Business Bay</p>
@@ -287,7 +301,7 @@ home = f'''
 <section class="band"><div class="wrap split" style="align-items:center">
 <div><p class="kicker">Why ARTÉ Properties</p><h2>A smaller team, by design</h2>
 <p class="lead">We work with a select number of clients at a time, so every search, sale and tenancy has one senior adviser across the detail from first call to keys.</p>
-<p class="sig">Led by {e(S["director"]["name"])}, {e(S["director"]["title"])} <span class="mute">· Dubai Broker Licence {e(S["director"]["brn"])}</span></p></div>
+<p class="sig" hidden></p></div>
 <div class="points">{"".join(f'<div class="reveal"><h3>{t}</h3><p class="mute">{d}</p></div>' for t,d in why)}</div></div></section>
 
 <section class="band alt"><div class="wrap"><div class="head-row"><div><p class="kicker">Area guides</p><h2>Know the community before you view</h2></div><a class="btn ghost" href="areas.html">All area guides</a></div>
@@ -299,9 +313,7 @@ home = f'''
 <section class="band cta-band"><div class="wrap split" style="align-items:center"><div><h2>Speak to an adviser today</h2><p class="lead" style="margin:0">Call, message or visit us in Business Bay. We reply on WhatsApp within the hour during working days.</p></div>
 <div style="display:flex;gap:12px;flex-wrap:wrap"><a class="btn" href="https://wa.me/{S["whatsapp"]}" target="_blank" rel="noopener">Message on WhatsApp</a><a class="btn ghost" href="tel:{S["phone_href"]}">Call {e(S["phone"])}</a></div></div></section>'''
 
-agent_ld = {"@context": "https://schema.org", "@type": "RealEstateAgent", "name": S["brand"], "legalName": S["legal_name"], "url": S["domain"],
-            "telephone": S["phone"], "email": S["email"], "address": {"@type": "PostalAddress", "addressLocality": "Business Bay, Dubai", "addressCountry": "AE"},
-            "sameAs": [S["instagram"], S["facebook"], S["linkedin"]], "areaServed": "Dubai"}
+agent_ld = {"@context": "https://schema.org", "@type": "WebSite", "name": S["brand"], "url": S["domain"] + "/"}
 pages["index.html"] = page("index.html", "ARTÉ Properties | Luxury real estate in Dubai", "ARTÉ Properties is a Business Bay brokerage for luxury homes to buy, rent and invest in across Dubai, with free property valuations and off-plan advice.", home, "index.html", agent_ld)
 
 # listings
@@ -352,9 +364,19 @@ for l in L:
 <a class="btn ghost" style="width:100%;margin-bottom:16px" href="{wa_link(msg)}" target="_blank" rel="noopener">Ask on WhatsApp</a>{enq}</aside></div></div></section>
 {f'<section class="band alt"><div class="wrap"><h2>You may also like</h2><div class="grid" style="margin-top:20px">{"".join(card(x) for x in similar)}</div></div></section>' if similar else ""}'''
     desc = f'{l["title"]} at {l["building"]}, {l["area"]}. {(aed(l["price"]) if l["price"] else "Price on request")}. {l["summary"]}'[:300]
-    ld = {"@context": "https://schema.org", "@type": "Offer", "name": f'{l["title"]}, {l["building"]}', "priceCurrency": "AED", "price": l["price"],
-          "availability": "https://schema.org/InStock", "seller": {"@type": "RealEstateAgent", "name": S["brand"]}}
-    pages[f'property-{l["slug"]}.html'] = page(f'property-{l["slug"]}.html', f'{l["title"]}, {l["building"]}', desc, body, "listings.html", ld if l["price"] else None, (l.get("images") or [""])[0])
+    url = S["domain"] + "/property-" + l["slug"]
+    ld = {"@context": "https://schema.org", "@type": "RealEstateListing", "name": l["title"], "url": url, "description": l["summary"],
+          "image": (l.get("images") or [])[:6], "datePosted": "2026-11-24",
+          "about": {"@type": "Accommodation" if l["type"] != "Office" else "Place", "name": l["building"],
+                    "address": {"@type": "PostalAddress", "addressLocality": l["area"], "addressRegion": "Dubai", "addressCountry": "AE"},
+                    **({"numberOfBedrooms": l["beds"]} if l.get("beds") else {}), **({"numberOfBathroomsTotal": l["baths"]} if l.get("baths") else {}),
+                    **({"floorSize": {"@type": "QuantitativeValue", "value": l["sqft"], "unitCode": "FTK"}} if l.get("sqft") else {})},
+          **({"offers": {"@type": "Offer", "price": l["price"], "priceCurrency": "AED", "availability": "https://schema.org/InStock",
+                         "businessFunction": "http://purl.org/goodrelations/v1#" + ("LeaseOut" if l["status"] == "rent" else "Sell"),
+                         "seller": {"@type": "RealEstateAgent", "name": S["brand"], "url": S["domain"]}}} if l["price"] else {})}
+    btxt = (f'{l["beds"]}-bed ' if l.get("beds") else "") + l["type"].lower()
+    seo_t = f'{btxt[:1].upper()}{btxt[1:]} {"off-plan" if l["stage"]=="offplan" else ("for rent" if l["status"]=="rent" else "for sale")} in {l["building"]}, {l["area"]}'
+    pages[f'property-{l["slug"]}.html'] = page(f'property-{l["slug"]}.html', seo_t, desc, body, "listings.html", ld, (l.get("images") or [""])[0])
 
 # areas
 areas_body = f'''<section class="band"><div class="wrap"><p class="crumbs"><a href="index.html">Home</a> / Area guides</p><h1>Dubai area guides</h1>
@@ -398,9 +420,8 @@ pages["about.html"] = page("about.html", "About us", "ARTÉ Properties is a high
 <p class="lead">ARTÉ Properties is a Dubai brokerage representing high-end homes for buyers, sellers, landlords and investors. We keep our client list deliberately small so that every one of them gets a senior adviser's time.</p>
 <h3 style="margin-top:28px">Our vision</h3><p>To be the most trusted name in Dubai's luxury property market, known for a portfolio of exceptional homes and for advice clients come back to.</p>
 <h3>Our mission</h3><p>To give every client a distinguished experience: honest pricing, a process without surprises, and someone who answers the phone.</p></div>
-<div class="panel"><h3>Leadership</h3><p style="margin:0"><b>{e(S["director"]["name"])}</b></p><p class="mute">{e(S["director"]["title"])} · Dubai Broker Licence (BRN) {e(S["director"]["brn"])}</p>
-<h3 style="margin-top:24px">Licensing</h3><p class="mute">{e(S["legal_name"])} is a real estate brokerage licensed in Dubai and regulated by the Real Estate Regulatory Agency (RERA).{f" Office registration number (ORN) {e(S['orn'])}." if S["orn"] else ""}</p>
-<a class="btn" href="contact.html">Meet the team</a></div></div></section>''', "about.html")
+<div class="panel"><h3>Licensing</h3><p class="mute">{e(S["legal_name"])} is a real estate brokerage licensed in Dubai and regulated by the Real Estate Regulatory Agency (RERA).{f" Office registration number (ORN) {e(S['orn'])}." if S["orn"] else ""}</p>
+<a class="btn" href="contact.html">Speak to us</a></div></div></section>''', "about.html")
 
 # contact
 pages["contact.html"] = page("contact.html", "Contact us", f'Contact ARTÉ Properties in Business Bay, Dubai. Call {S["phone"]}, WhatsApp or email {S["email"]}.', f'''
@@ -436,7 +457,7 @@ shutil.copy(ROOT / "src/app.js", OUT / "app.js")
 shutil.copytree(ROOT / "src/img", OUT / "img")
 (OUT / "favicon.svg").write_text('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#101417"/><text x="32" y="44" text-anchor="middle" font-family="Georgia,serif" font-size="34" fill="#d6c2a0">A</text><rect x="18" y="50" width="28" height="2" fill="#e2725b"/></svg>')
 (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {S['domain']}/sitemap.xml\n")
-urls = "".join(f"<url><loc>{S['domain']}/{'' if n=='index.html' else n.replace('.html','')}</loc></url>" for n in pages if n not in ("404.html",))
+urls = "".join(f"<url><loc>{S['domain']}/{'' if n=='index.html' else n.replace('.html','')}</loc><lastmod>{TODAY}</lastmod><priority>{'1.0' if n=='index.html' else ('0.8' if n.startswith(('property-','listings','area')) else '0.5')}</priority></url>" for n in pages if n not in ("404.html",))
 (OUT / "sitemap.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>')
 # old Wix URLs -> new pages (Netlify)
 (OUT / "_redirects").write_text("""/about-1            /about           301
