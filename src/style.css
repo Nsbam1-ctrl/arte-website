@@ -2,18 +2,18 @@
 VOICE: quiet, confident, private-banker calm; few words, generous air.
 IDEA: a Dubai skyline at dusk seen from the water: the city is the hero, everything else is a brass plaque beside it.
 PICTURE: layered SVG skyline with a reflected creek, coral dusk sky; listings drawn as lit facades when no photo exists.
-COLOUR and TYPE: graphite night #101417, sand #d6c2a0 support, dusk coral #e2725b accent. Marcellus (engraved, architectural) for titles, Manrope for text.
+COLOUR and TYPE: graphite night #101417, sand #d6c2a0 support, dusk coral #e2725b accent. Cormorant Garamond (matches the ARTÉ logo) for titles, Jost for text.
 LAYOUT: full-bleed bands, search panel sitting on the waterline, 1240px content, cards in auto-fill grids, stack under 600px.
 */
-:root{color-scheme:dark;--bg:#101417;--s1:#161b1f;--s2:#1d2328;--line:#2b3238;--ink:#ece6dc;--mute:#a6a29a;--sand:#d6c2a0;--acc:#e2725b;--acc2:#f0957f;--r:14px;--f-t:"Marcellus",Georgia,serif;--f-b:"Manrope",system-ui,sans-serif}
+:root{color-scheme:dark;--bg:#101417;--s1:#161b1f;--s2:#1d2328;--line:#2b3238;--ink:#ece6dc;--mute:#a6a29a;--sand:#d6c2a0;--acc:#e2725b;--acc2:#f0957f;--r:14px;--f-t:"Cormorant Garamond","Cormorant",Georgia,serif;--f-b:"Jost",system-ui,sans-serif}
 :root[data-theme=light],:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
 html{scroll-padding-top:84px;-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--f-b);overflow-x:clip}
+body{margin:0;background:var(--bg);color:var(--ink);font:300 17px/1.6 var(--f-b);overflow-x:clip}b,strong{font-weight:500}
 img{max-width:100%;display:block}
 a{color:inherit}
-h1,h2,h3{font-family:var(--f-t);font-weight:400;line-height:1.08;text-wrap:balance;margin:0 0 .4em}
-h1{font-size:clamp(36px,5.4vw,60px)}h2{font-size:clamp(28px,3.4vw,42px)}h3{font-size:22px}
+h1,h2,h3{font-family:var(--f-t);font-weight:600;line-height:1.04;text-wrap:balance;margin:0 0 .4em;font-variant-numeric:lining-nums;letter-spacing:-.005em}
+h1{font-size:clamp(40px,6vw,68px)}h2{font-size:clamp(32px,3.8vw,48px)}h3{font-size:25px}
 p{margin:0 0 1em}.mute{color:var(--mute)}.small{font-size:14px}
 .wrap{max-width:1240px;margin:0 auto;padding:0 max(5vw,16px)}
 .band{padding:clamp(48px,7vw,96px) 0}.band.alt{background:var(--s1)}
@@ -23,7 +23,7 @@ p{margin:0 0 1em}.mute{color:var(--mute)}.small{font-size:14px}
 /* header */
 .top{position:sticky;top:0;z-index:20;background:rgba(16,20,23,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .top .wrap{display:flex;align-items:center;gap:24px;height:72px}
-.logo{display:flex;flex-direction:column;text-decoration:none;line-height:1}
+.logo{display:flex;flex-direction:column;text-decoration:none;line-height:1}.logo img{height:46px;width:auto;display:block}footer .logo img{height:58px}
 .logo b{font-family:var(--f-t);font-weight:400;font-size:26px;letter-spacing:.18em}
 .logo span{font-size:10.5px;letter-spacing:.42em;color:var(--sand);margin-top:5px}
 .nav{display:flex;gap:4px;margin-left:auto;align-items:center}
@@ -75,7 +75,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--sand);outline:none}
 .badge{position:absolute;left:12px;top:12px;background:rgba(16,20,23,.85);border:1px solid var(--line);border-radius:999px;font-size:12.5px;padding:5px 11px;color:var(--ink)}
 .badge.op{background:var(--acc);color:#1a0f0b;border-color:var(--acc)}
 .card .bd{padding:16px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
-.price{font-family:var(--f-t);font-size:24px;white-space:nowrap}
+.price{font-family:var(--f-t);font-weight:600;font-size:28px;white-space:nowrap;font-variant-numeric:lining-nums}
 .price small{font-family:var(--f-b);font-size:13px;color:var(--mute)}
 .where{color:var(--sand);font-size:14px}
 .specs{display:flex;gap:14px;flex-wrap:wrap;color:var(--mute);font-size:14px;margin-top:auto;padding-top:10px;border-top:1px solid var(--line)}
@@ -87,8 +87,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--sand);outline:none}
 @media(max-width:860px){.split{grid-template-columns:minmax(0,1fr)}}
 .panel{background:var(--s1);border:1px solid var(--line);border-radius:18px;padding:clamp(20px,3vw,32px)}
 .points{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:28px;margin-top:28px}
-.points h3{font-size:21px}
-.points .n{font-family:var(--f-t);color:var(--acc);font-size:34px;line-height:1;margin-bottom:12px}
+.points h3{font-size:26px}
+.points .n{font-family:var(--f-t);font-weight:600;font-variant-numeric:lining-nums;color:var(--acc);font-size:40px;line-height:1;margin-bottom:12px}
 .svc{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:18px;margin-top:28px}
 .svc .panel h3{margin-bottom:.5em}
 .svc svg{width:40px;height:40px;margin-bottom:14px;stroke:var(--sand);fill:none;stroke-width:1.4}
@@ -100,7 +100,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--sand);outline:none}
 .area-card h3{margin:0 0 4px}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:14px;margin:22px 0}
 .stat{background:var(--s1);border:1px solid var(--line);border-radius:12px;padding:16px}
-.stat b{display:block;font-family:var(--f-t);font-weight:400;font-size:clamp(26px,3vw,32px);white-space:nowrap}
+.stat b{display:block;font-family:var(--f-t);font-weight:600;font-variant-numeric:lining-nums;font-size:clamp(26px,3vw,32px);white-space:nowrap}
 .stat span{font-size:13.5px;color:var(--mute)}
 .up{color:#9fd8b0}.down{color:#f0a493}
 table{width:100%;border-collapse:collapse;font-size:15px}

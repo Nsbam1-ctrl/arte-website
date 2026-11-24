@@ -172,16 +172,16 @@ def page(path, title, desc, body, active="", jsonld=None, og_img=""):
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(full_title)}</title><meta name="description" content="{e(desc)}"><link rel="canonical" href="{e(canon)}">
 <meta property="og:title" content="{e(full_title)}"><meta property="og:description" content="{e(desc)}"><meta property="og:type" content="website"><meta property="og:url" content="{e(canon)}">{f'<meta property="og:image" content="{e(og_img)}">' if og_img else ''}
-<meta name="theme-color" content="#101417"><link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#101417"><link rel="icon" href="img/favicon.png" type="image/png"><link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Marcellus&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500;600&display=swap">
 <link rel="stylesheet" href="style.css">{ld}</head>
 <body data-wa="{e(S["whatsapp"])}" data-tel="{e(S["phone_href"])}" data-phone="{e(S["phone"])}">
-<header class="top"><div class="wrap"><a class="logo" href="index.html" aria-label="ARTÉ Properties home"><b>ARTÉ</b><span>PROPERTIES</span></a>
+<header class="top"><div class="wrap"><a class="logo" href="index.html" aria-label="ARTÉ Properties home"><img src="img/arte-logo-white.png" alt="ARTÉ Properties" width="118" height="51"></a>
 <button class="menu-btn" aria-label="Menu" aria-expanded="false">☰</button><nav class="nav">{nav}<a class="btn sm" href="valuation.html" style="margin-left:8px">Free valuation</a></nav></div></header>
 <main>{body}</main>
 <footer><div class="wrap"><div class="fgrid">
-<div><a class="logo" href="index.html"><b>ARTÉ</b><span>PROPERTIES</span></a><p style="margin-top:16px;max-width:34ch">A Dubai brokerage for buying, selling, leasing and managing premium homes.</p>
+<div><a class="logo" href="index.html"><img src="img/arte-logo-white.png" alt="ARTÉ Properties" width="150" height="65"></a><p style="margin-top:16px;max-width:34ch">A Dubai brokerage for buying, selling, leasing and managing premium homes.</p>
 <p>{e(S["address"])}</p></div>
 <div><h4>Properties</h4><a href="listings.html?stage=sale">For sale</a><a href="listings.html?stage=rent">For rent</a><a href="listings.html?stage=offplan">Off-plan</a><a href="valuation.html">Value my property</a></div>
 <div><h4>Area guides</h4>{areas_links}<a href="areas.html">All areas</a></div>
@@ -223,7 +223,7 @@ def card(l):
     badge = f'<span class="badge op">{"Off-plan resale" if l.get("source")=="propertyfinder" else "New launch"}</span>' if l["stage"] == "offplan" else f'<span class="badge">{"For rent" if l["status"]=="rent" else "For sale"}</span>'
     dev = f' · {e(l["developer"])}' if l.get("developer") else ""
     return (f'<a class="card reveal" href="property-{l["slug"]}.html" data-listing data-status="{l["status"]}" data-stage="{l["stage"]}" data-area="{e(l["area"])}" data-type="{e(l["type"])}" data-beds="{l.get("beds") if l.get("beds") is not None else ""}" data-price="{l["price"] or ""}">'
-            f'<div class="ph">{photo(l)}{badge}</div><div class="bd">{price_html(l)}<h3 style="margin:0;font-size:20px">{e(l["title"])}</h3>'
+            f'<div class="ph">{photo(l)}{badge}</div><div class="bd">{price_html(l)}<h3 style="margin:0;font-size:23px">{e(l["title"])}</h3>'
             f'<div class="where">{e(l["building"])}, {e(l["area"])}{dev}</div><div class="specs">{specs(l)}</div></div></a>')
 
 # ---------- pages ----------
@@ -420,6 +420,7 @@ for name, content in pages.items():
     (OUT / name).write_text(content)
 shutil.copy(ROOT / "src/style.css", OUT / "style.css")
 shutil.copy(ROOT / "src/app.js", OUT / "app.js")
+shutil.copytree(ROOT / "src/img", OUT / "img")
 (OUT / "favicon.svg").write_text('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#101417"/><text x="32" y="44" text-anchor="middle" font-family="Georgia,serif" font-size="34" fill="#d6c2a0">A</text><rect x="18" y="50" width="28" height="2" fill="#e2725b"/></svg>')
 (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {S['domain']}/sitemap.xml\n")
 urls = "".join(f"<url><loc>{S['domain']}/{'' if n=='index.html' else n.replace('.html','')}</loc></url>" for n in pages if n not in ("404.html",))
