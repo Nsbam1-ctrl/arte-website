@@ -127,7 +127,7 @@ footer a{text-decoration:none;display:block;padding:4px 0}footer a:hover{color:v
 .legal{border-top:1px solid var(--line);margin-top:36px;padding-top:20px;font-size:13px;display:flex;gap:16px;flex-wrap:wrap;justify-content:space-between}
 
 /* whatsapp */
-.wa{position:fixed;right:18px;bottom:18px;z-index:30;width:58px;height:58px;border-radius:50%;background:#25d366;display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.wa{position:fixed;right:18px;bottom:76px;z-index:30;width:58px;height:58px;border-radius:50%;background:#25d366;display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,0,0,.4)}
 .wa svg{width:30px;height:30px;fill:#fff}
 
 .reveal{opacity:0;transform:translateY(14px);transition:opacity .7s,transform .7s}
