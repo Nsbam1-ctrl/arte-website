@@ -236,7 +236,7 @@ TYPES_OPT = [("", "Any type")] + sorted({(l["type"], l["type"]) for l in L})
 BEDS_OPT = [("", "Any beds"), ("1", "1 bed"), ("2", "2 beds"), ("3", "3 beds"), ("4", "4+ beds")]
 
 def card(l):
-    badge = '<span class="badge sig">Signature</span>' if l.get("signature") else None
+    badge = '<span class="badge prime">Signature</span>' if l.get("signature") else None
     badge = badge or f'<span class="badge op">{"Off-plan resale" if l.get("source")=="propertyfinder" else "New launch"}</span>' if l["stage"] == "offplan" else f'<span class="badge">{"For rent" if l["status"]=="rent" else "For sale"}</span>'
     dev = f' · {e(l["developer"])}' if l.get("developer") else ""
     return (f'<a class="card reveal" href="property-{l["slug"]}.html" data-listing data-status="{l["status"]}" data-stage="{l["stage"]}" data-area="{e(l["area"])}" data-type="{e(l["type"])}" data-beds="{l.get("beds") if l.get("beds") is not None else ""}" data-bedsmax="{l.get("beds_max") or (l.get("beds") if l.get("beds") is not None else "")}" data-price="{l["price"] or ""}" data-sig="{1 if l.get("signature") else 0}">'
