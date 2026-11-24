@@ -49,6 +49,20 @@ def summary(desc):
     out = " ".join(sents[:2])[:420]
     return out[:1].upper() + out[1:] if out else ""
 
+def gallery(url):
+    """Full-size photos from the listing's own page (up to 16)."""
+    if not url: return []
+    try:
+        req = urllib.request.Request(url, headers={**HEADERS, "Accept": "text/html"})
+        with urllib.request.urlopen(req, timeout=30) as r:
+            page = r.read().decode("utf-8", "ignore")
+        m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', page, re.S)
+        imgs = json.loads(m.group(1))["props"]["pageProps"]["propertyResult"]["property"]["images"]["property"]
+        return [i.get("full", i.get("medium", "")).split("?")[0] for i in imgs if i.get("full") or i.get("medium")][:16]
+    except Exception as err:
+        print(f"  gallery skipped for {url}: {err}")
+        return []
+
 def convert(p):
     loc = p.get("location") or {}
     path = (loc.get("path_name") or "")
@@ -78,6 +92,7 @@ def convert(p):
         "highlights": hl[:4], "amenities": (p.get("amenity_names") or [])[:10],
         "summary": summary(p.get("description")), "permit": p.get("rera") or "",
         "images": [i.get("medium", "").split("?")[0] for i in (p.get("images") or []) if i.get("medium")],
+        "url": p.get("share_url", ""),
     }
 
 def main():
@@ -100,6 +115,10 @@ def main():
     if not live:
         print("Property Finder returned no listings, keeping existing ones to be safe."); sys.exit(2)
     for l in live:
+        full = gallery(l.pop("url", ""))
+        if full:
+            l["thumb"] = l["images"][0] if l["images"] else full[0]
+            l["images"] = full
         l.update(overrides.get(l["pf_id"], {}))
     LISTINGS.write_text(json.dumps(live + keep, indent=1, ensure_ascii=False) + "\n")
     print(f"Synced {len(live)} Property Finder listings (+{len(keep)} kept).")

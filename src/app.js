@@ -41,7 +41,7 @@ if(lf){
     const f=Object.fromEntries(new FormData(lf));
     const min=+f.min||0,max=+f.max||Infinity,beds=f.beds;let n=0;
     cards.forEach(c=>{const d=c.dataset,p=+d.price||0;
-      const ok=(stage==='all'||(stage==='sale'&&d.status==='sale'&&d.stage==='ready')||(stage==='rent'&&d.status==='rent')||(stage==='offplan'&&d.stage==='offplan'))
+      const ok=(stage==='all'||(stage==='sale'&&d.status==='sale')||(stage==='rent'&&d.status==='rent')||(stage==='offplan'&&d.stage==='offplan'))
         &&(!f.area||d.area===f.area)&&(!f.type||d.type===f.type)
         &&(!beds||(beds==='4'?+d.beds>=4:d.beds===beds))
         &&(!p||(p>=min&&p<=max))&&(p||(!f.min&&!f.max));
@@ -73,5 +73,15 @@ $$('form[data-netlify]').forEach(form=>{
       :'We could not send this form from here. <a href="'+wa+'" target="_blank" rel="noopener">Send it on WhatsApp instead</a> or call <a href="tel:'+document.body.dataset.tel+'">'+document.body.dataset.phone+'</a>.';
     if(ok)form.reset();
   });
+});
+}
+{
+/* photo carousel on property pages */
+document.querySelectorAll('[data-carousel]').forEach(c=>{
+  const t=c.querySelector('.track'),n=c.querySelector('.count b'),slides=[...t.children];
+  const go=d=>{const i=Math.round(t.scrollLeft/t.clientWidth);const j=Math.max(0,Math.min(slides.length-1,i+d));t.scrollTo({left:j*t.clientWidth,behavior:'smooth'})};
+  c.querySelector('.prev').addEventListener('click',()=>go(-1));c.querySelector('.next').addEventListener('click',()=>go(1));
+  t.addEventListener('scroll',()=>{n.textContent=Math.round(t.scrollLeft/t.clientWidth)+1},{passive:true});
+  c.tabIndex=0;c.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')go(-1);if(e.key==='ArrowRight')go(1)});
 });
 }

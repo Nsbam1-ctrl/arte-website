@@ -51,11 +51,12 @@ def specs(l):
 def facade(seed, kind="Apartment", label=""):
     """A lit building at dusk, used when a listing has no photo yet."""
     r = random.Random(seed)
+    global _fid; _fid = globals().get("_fid", 0) + 1; gid = f"{seed}-{_fid}"
     hue = r.choice(["#2a2230", "#232a33", "#2c2627", "#20262c"])
     parts = [f'<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'
-             f'<defs><linearGradient id="g{seed}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#141820"/>'
+             f'<defs><linearGradient id="g{gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#141820"/>'
              f'<stop offset=".62" stop-color="{hue}"/><stop offset="1" stop-color="#c4654f"/></linearGradient></defs>'
-             f'<rect width="400" height="300" fill="url(#g{seed})"/>']
+             f'<rect width="400" height="300" fill="url(#g{gid})"/>']
     # distant skyline
     x = 0
     while x < 400:
@@ -150,9 +151,10 @@ def mini_sky(seed):
 
 def seed_of(s): return sum(ord(c) * (i + 1) for i, c in enumerate(s)) % 100000
 
-def photo(l, i=0):
+def photo(l, i=0, thumb=False):
     ims = l.get("images") or []
-    img = f'<img src="{e(ims[i])}" alt="{e(l["title"])}, {e(l["building"])}" loading="lazy" referrerpolicy="no-referrer" data-fallback>' if len(ims) > i else ""
+    src = l.get("thumb") if (thumb and l.get("thumb")) else (ims[i] if len(ims) > i else "")
+    img = f'<img src="{e(src)}" alt="{e(l["title"])}, {e(l["building"])}" loading="lazy" referrerpolicy="no-referrer" data-fallback>' if src else ""
     return facade(seed_of(l["slug"]), l["type"]) + img
 
 # ---------- shared chrome ----------
@@ -223,7 +225,7 @@ def card(l):
     badge = f'<span class="badge op">{"Off-plan resale" if l.get("source")=="propertyfinder" else "New launch"}</span>' if l["stage"] == "offplan" else f'<span class="badge">{"For rent" if l["status"]=="rent" else "For sale"}</span>'
     dev = f' · {e(l["developer"])}' if l.get("developer") else ""
     return (f'<a class="card reveal" href="property-{l["slug"]}.html" data-listing data-status="{l["status"]}" data-stage="{l["stage"]}" data-area="{e(l["area"])}" data-type="{e(l["type"])}" data-beds="{l.get("beds") if l.get("beds") is not None else ""}" data-price="{l["price"] or ""}">'
-            f'<div class="ph">{photo(l)}{badge}</div><div class="bd">{price_html(l)}<h3 style="margin:0;font-size:23px">{e(l["title"])}</h3>'
+            f'<div class="ph">{photo(l, thumb=True)}{badge}</div><div class="bd">{price_html(l)}<h3 style="margin:0;font-size:23px">{e(l["title"])}</h3>'
             f'<div class="where">{e(l["building"])}, {e(l["area"])}{dev}</div><div class="specs">{specs(l)}</div></div></a>')
 
 # ---------- pages ----------
@@ -259,18 +261,21 @@ valuation_form = form("valuation", contact_fields() +
     f'<div class="row">{fld("bedrooms","Bedrooms",opts=[("Studio","Studio"),("1","1"),("2","2"),("3","3"),("4","4"),("5+","5+")])}{fld("intent","I am looking to",opts=[("Sell","Sell"),("Rent out","Rent out"),("Understand its value","Understand its value")])}</div>',
     "Request my valuation")
 
+_hero = [x for x in sorted([x for x in L if x.get("source")=="propertyfinder" and x.get("images")], key=lambda x: -(x["price"] or 0) * (5 if x["status"]=="sale" else 60))][:3]
+hero_slides = '<div class="slides" aria-hidden="true">' + "".join(f'<img src="{e(x["images"][0])}" alt="" referrerpolicy="no-referrer" data-fallback style="animation-delay:{i*7}s">' for i, x in enumerate(_hero)) + '</div>'
 home = f'''
-<section class="hero">{skyline()}<div class="wrap">
-<p class="kicker">Dubai real estate, Business Bay</p>
+<section class="hero hero-home">{skyline()}{hero_slides}<div class="wrap">
+<p class="kicker">Boutique real estate, Business Bay</p>
 <h1>Your gateway to exclusive properties in Dubai</h1>
 <p class="lead">Homes to buy, rent and invest in across Downtown, Business Bay, Dubai Hills, the Marina and Creek Harbour, with an adviser beside you from first viewing to keys.</p>
 <div class="tabs" role="tablist"><button class="tab" role="tab" data-stage="all" aria-selected="true">All</button><button class="tab" role="tab" data-stage="sale" aria-selected="false">Buy</button><button class="tab" role="tab" data-stage="rent" aria-selected="false">Rent</button><button class="tab" role="tab" data-stage="offplan" aria-selected="false">Off-plan</button></div>
 <form class="search" id="home-search">{fld("area","Area",req=False,opts=AREAS_OPT)}{fld("type","Type",req=False,opts=TYPES_OPT)}{fld("beds","Bedrooms",req=False,opts=BEDS_OPT)}{fld("min","Min price (AED)","number",False,ph="Any")}{fld("max","Max price (AED)","number",False,ph="Any")}<button class="btn" type="submit">Search</button></form>
+<p class="trust"><span>Property Finder SuperAgent</span><span>RERA-regulated brokerage</span><span>Office in Business Bay</span></p>
 </div></section>
 
 <section class="band"><div class="wrap">
-<div class="head-row"><div><p class="kicker">Featured</p><h2>Properties we are showing now</h2></div><a class="btn ghost" href="listings.html">View all properties</a></div>
-<div class="grid">{"".join(card(l) for l in (sorted([x for x in L if x["status"]=="sale" and x.get("source")=="propertyfinder"], key=lambda x: -(x["price"] or 0))[:3] + sorted([x for x in L if x["status"]=="rent"], key=lambda x: -(x["price"] or 0))[:3]))}</div>
+<div class="head-row"><div><p class="kicker">The collection</p><h2>Homes we are showing now</h2></div><a class="btn ghost" href="listings.html">View all properties</a></div>
+<div class="grid editorial">{"".join(card(l) for l in (sorted([x for x in L if x["status"]=="sale" and x.get("source")=="propertyfinder"], key=lambda x: -(x["price"] or 0))[:3] + sorted([x for x in L if x["status"]=="rent"], key=lambda x: -(x["price"] or 0))[:3]))}</div>
 </div></section>
 
 <section class="band alt"><div class="wrap split">
@@ -279,8 +284,11 @@ home = f'''
 <ul class="ticks"><li>Comparable sales from Dubai Land Department records</li><li>Achievable rent and yield if you plan to let</li><li>A marketing plan and timeline if you decide to sell</li></ul></div>
 <div class="panel">{valuation_form}</div></div></section>
 
-<section class="band"><div class="wrap"><p class="kicker">Why ARTÉ Properties</p><h2>A smaller team, by design</h2>
-<div class="points">{"".join(f'<div class="reveal"><div class="n">0{i+1}</div><h3>{t}</h3><p class="mute">{d}</p></div>' for i,(t,d) in enumerate(why))}</div></div></section>
+<section class="band"><div class="wrap split" style="align-items:center">
+<div><p class="kicker">Why ARTÉ Properties</p><h2>A smaller team, by design</h2>
+<p class="lead">We work with a select number of clients at a time, so every search, sale and tenancy has one senior adviser across the detail from first call to keys.</p>
+<p class="sig">Led by {e(S["director"]["name"])}, {e(S["director"]["title"])} <span class="mute">· Dubai Broker Licence {e(S["director"]["brn"])}</span></p></div>
+<div class="points">{"".join(f'<div class="reveal"><h3>{t}</h3><p class="mute">{d}</p></div>' for t,d in why)}</div></div></section>
 
 <section class="band alt"><div class="wrap"><div class="head-row"><div><p class="kicker">Area guides</p><h2>Know the community before you view</h2></div><a class="btn ghost" href="areas.html">All area guides</a></div>
 <div class="grid">{"".join(area_card(a) for a in A)}</div></div></section>
@@ -312,7 +320,12 @@ for l in L:
     a = AREA.get(l.get("area_slug") or "")
     hl = "".join(f"<li>{e(h)}</li>" for h in l["highlights"])
     ims = l.get("images") or []
-    thumbs = ('<div class="thumbs">' + "".join(f'<div class="gallery sm">{facade(seed_of(l["slug"])+i, l["type"])}{photo(l, i)}</div>' for i in range(1, len(ims))) + '</div>') if len(ims) > 1 else ""
+    if len(ims) > 1:
+        gal = ('<div class="carousel" data-carousel><div class="track">' + "".join(f'<figure class="slide">{facade(seed_of(l["slug"])+i, l["type"])}{photo(l, i)}</figure>' for i in range(len(ims))) +
+               f'</div><button class="cnav prev" type="button" aria-label="Previous photo">‹</button><button class="cnav next" type="button" aria-label="Next photo">›</button><span class="count"><b>1</b> / {len(ims)}</span></div>')
+    else:
+        gal = f'<div class="gallery">{photo(l)}</div>'
+
     amen = ('<h3 style="margin-top:24px">Features</h3><p class="chips">' + "".join(f"<span>{e(a)}</span>" for a in l["amenities"]) + '</p>') if l.get("amenities") else ""
     facts = [("Type", l["type"]), ("Bedrooms", beds_txt(l)), ("Bathrooms", l.get("baths")),
              ("Size", sqft_txt(l)), ("Developer", l.get("developer")), ("Handover", l.get("handover")), ("Furnished", {True: "Yes", False: "No"}.get(l.get("furnished"))), ("Status", ("Off-plan resale" if l.get("source")=="propertyfinder" else "Off-plan") if l["stage"] == "offplan" else ("For rent" if l["status"] == "rent" else "Ready, for sale"))]
@@ -327,7 +340,7 @@ for l in L:
     body = f'''<section class="band"><div class="wrap">
 <p class="crumbs"><a href="index.html">Home</a> / <a href="listings.html">Properties</a> / {e(l["building"])}</p>
 <div class="split"><div>
-<div class="gallery">{photo(l)}</div>{thumbs}
+{gal}
 <p class="where" style="margin-top:22px">{e(l["building"])}, {e(l["area"])}</p><h1 style="font-size:clamp(30px,4vw,46px)">{e(l["title"])}</h1>
 {price_html(l)}
 <div class="facts">{facts_html}</div>
