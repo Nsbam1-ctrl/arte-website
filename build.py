@@ -270,7 +270,7 @@ home = f'''
 
 <section class="band"><div class="wrap">
 <div class="head-row"><div><p class="kicker">Featured</p><h2>Properties we are showing now</h2></div><a class="btn ghost" href="listings.html">View all properties</a></div>
-<div class="grid">{"".join(card(l) for l in (sorted([x for x in L if x["status"]=="sale"], key=lambda x: -(x["price"] or 0))[:3] + sorted([x for x in L if x["status"]=="rent"], key=lambda x: -(x["price"] or 0))[:3]))}</div>
+<div class="grid">{"".join(card(l) for l in (sorted([x for x in L if x["status"]=="sale" and x.get("source")=="propertyfinder"], key=lambda x: -(x["price"] or 0))[:3] + sorted([x for x in L if x["status"]=="rent"], key=lambda x: -(x["price"] or 0))[:3]))}</div>
 </div></section>
 
 <section class="band alt"><div class="wrap split">
