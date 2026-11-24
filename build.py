@@ -270,7 +270,7 @@ home = f'''
 
 <section class="band"><div class="wrap">
 <div class="head-row"><div><p class="kicker">Featured</p><h2>Properties we are showing now</h2></div><a class="btn ghost" href="listings.html">View all properties</a></div>
-<div class="grid">{"".join(card(l) for l in [L[0], L[1], L[5], L[4], L[12], L[7]])}</div>
+<div class="grid">{"".join(card(l) for l in (sorted([x for x in L if x["status"]=="sale"], key=lambda x: -(x["price"] or 0))[:3] + sorted([x for x in L if x["status"]=="rent"], key=lambda x: -(x["price"] or 0))[:3]))}</div>
 </div></section>
 
 <section class="band alt"><div class="wrap split">
@@ -299,7 +299,7 @@ pages["index.html"] = page("index.html", "ARTÉ Properties | Luxury real estate 
 # listings
 listing_body = f'''<section class="band" style="padding-bottom:24px"><div class="wrap">
 <p class="crumbs"><a href="index.html">Home</a> / Properties</p><h1>Properties in Dubai</h1>
-<p class="lead">Ready homes for sale and rent, and off-plan launches we recommend. New stock arrives every week, so tell us what you are after if it is not here yet.</p>
+<p class="lead">Homes for sale and rent, updated automatically from our live listings. New stock arrives every week, so tell us what you are after if it is not here yet.</p>
 <div class="tabs" role="tablist"><button class="tab" role="tab" data-stage="all">All</button><button class="tab" role="tab" data-stage="sale">For sale</button><button class="tab" role="tab" data-stage="rent">For rent</button><button class="tab" role="tab" data-stage="offplan">Off-plan</button></div>
 <form class="search" id="filter" style="max-width:none">{fld("area","Area",req=False,opts=AREAS_OPT)}{fld("type","Type",req=False,opts=TYPES_OPT)}{fld("beds","Bedrooms",req=False,opts=BEDS_OPT)}{fld("min","Min price (AED)","number",False,ph="Any")}{fld("max","Max price (AED)","number",False,ph="Any")}<button class="btn ghost" type="button" id="clear">Clear</button></form>
 <p class="mute" style="margin:18px 0 0" id="count" aria-live="polite"></p></div></section>
