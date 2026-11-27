@@ -169,7 +169,16 @@ def photo(l, i=0, thumb=False):
 WA_ICON = '<svg viewBox="0 0 32 32"><path d="M16 3C9 3 3.4 8.6 3.4 15.5c0 2.4.7 4.7 1.9 6.7L3 29l7-2.2c1.9 1 4 1.6 6.1 1.6 7 0 12.6-5.6 12.6-12.5S23 3 16 3zm0 22.9c-1.9 0-3.8-.5-5.4-1.5l-.4-.2-4.1 1.3 1.3-4-.3-.4c-1.1-1.7-1.7-3.6-1.7-5.6C5.4 9.8 10.1 5.1 16 5.1s10.6 4.7 10.6 10.4S21.9 25.9 16 25.9zm5.8-7.8c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.5-1.6-.9-.8-1.6-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.3.3-.6.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.5c.2.2 2.4 3.6 5.8 5 .8.3 1.4.5 1.9.7.8.3 1.6.2 2.2.1.7-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg>'
 NAV = [("index.html", "Home"), ("listings.html", "Properties"), ("areas.html", "Area guides"), ("services.html", "Services"), ("about.html", "About"), ("contact.html", "Contact")]
 
+T = {k: v.strip() for k, v in S.get("tracking", {}).items() if not k.startswith("_")}
+TRACK_ON = any(T.get(k) for k in ("gtm_id", "ga4_id", "ads_id", "meta_pixel_id"))
+TRACK_HEAD = ("<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}"
+    "gtag('consent','default',{ad_storage:'denied',analytics_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500});"
+    f"window.ARTE_T={json.dumps(T)};</script>") if TRACK_ON else ""
+UTM_FIELDS = ("utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "gclid", "fbclid", "landing_page")
+
 def wa_link(msg): return f'https://wa.me/{S["whatsapp"]}?text=' + re.sub(r"\s", "%20", e(msg))
+
+COOKIE_LINK = ' <a href="#" data-cookie-settings style="display:inline;margin-left:12px">Cookie settings</a>' if TRACK_ON else ""
 
 def page(path, title, desc, body, active="", jsonld=None, og_img=""):
     nav = "".join(f'<a href="{h}"{" aria-current=page" if h == active else ""}>{t}</a>' for h, t in NAV)
@@ -191,7 +200,7 @@ def page(path, title, desc, body, active="", jsonld=None, og_img=""):
 <meta name="theme-color" content="#101417"><link rel="icon" href="img/favicon.png" type="image/png"><link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500;600&display=swap">
-<link rel="stylesheet" href="style.css">{ld}</head>
+<link rel="stylesheet" href="style.css">{TRACK_HEAD}{ld}</head>
 <body data-wa="{e(S["whatsapp"])}" data-tel="{e(S["phone_href"])}" data-phone="{e(S["phone"])}">
 <header class="top"><div class="wrap"><a class="logo" href="index.html" aria-label="ARTÉ Properties home"><img src="img/arte-logo-white.png" alt="ARTÉ Properties" width="118" height="51"></a>
 <button class="menu-btn" aria-label="Menu" aria-expanded="false">☰</button><nav class="nav">{nav}<a class="btn sm" href="valuation.html" style="margin-left:8px">Free valuation</a></nav></div></header>
@@ -203,12 +212,13 @@ def page(path, title, desc, body, active="", jsonld=None, og_img=""):
 <div><h4>Area guides</h4>{areas_links}<a href="areas.html">All areas</a></div>
 <div><h4>Contact</h4><a href="tel:{e(S["phone_href"])}">{e(S["phone"])}</a><a href="mailto:{e(S["email"])}">{e(S["email"])}</a><a href="https://wa.me/{e(S["whatsapp"])}" target="_blank" rel="noopener">WhatsApp</a>
 <a href="{e(S["instagram"])}" target="_blank" rel="noopener">Instagram</a><a href="{e(S["facebook"])}" target="_blank" rel="noopener">Facebook</a><a href="{e(S["linkedin"])}" target="_blank" rel="noopener">LinkedIn</a></div>
-</div><div class="legal"><span>© 2026 {e(S["legal_name"])}{orn}. Regulated by the Real Estate Regulatory Agency (RERA), Dubai. <span class="brn">BRN {e(S["director"]["brn"])}</span></span><a href="privacy.html" style="display:inline">Privacy</a></div></div></footer>
+</div><div class="legal"><span>© 2026 {e(S["legal_name"])}{orn}. Regulated by the Real Estate Regulatory Agency (RERA), Dubai. <span class="brn">BRN {e(S["director"]["brn"])}</span></span><a href="privacy.html" style="display:inline">Privacy</a>{COOKIE_LINK}</div></div></footer>
 <a class="wa" href="https://wa.me/{e(S["whatsapp"])}" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">{WA_ICON}</a>
 <script src="app.js"></script></body></html>'''
 
 def form(name, fields, button, hidden=None, extra=""):
     hid = "".join(f'<input type="hidden" name="{e(k)}" value="{e(v)}">' for k, v in (hidden or {}).items())
+    hid += "".join(f'<input type="hidden" name="{k}" data-utm>' for k in UTM_FIELDS)
     return (f'<form class="form" name="{name}" method="POST" data-netlify="true" netlify-honeypot="bot-field">'
             f'<input type="hidden" name="form-name" value="{name}">{hid}'
             f'<p class="hp"><label>Leave empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>'
@@ -443,11 +453,13 @@ pages["valuation.html"] = page("valuation.html", "Free property valuation in Dub
 <p class="lead">A free, no-obligation valuation from an adviser who knows your community, usually within one working day.</p>
 <ul class="ticks"><li>Recent comparable sales in your building and cluster</li><li>Achievable rent and gross yield</li><li>Advice on timing, presentation and pricing strategy</li></ul></div><div class="panel">{valuation_form}</div></div></section>''', "")
 
+COOKIE_TEXT = ('<h2 style="margin-top:32px">Cookies</h2><p>We only set analytics and advertising cookies if you choose Accept on the cookie banner. They come from Google (Analytics and Ads) and Meta, and tell us how visitors use the site and which adverts lead to enquiries. If you choose Decline, none of these tags load. You can change your choice at any time with Cookie settings at the foot of every page.</p>') if TRACK_ON else ""
 pages["privacy.html"] = page("privacy.html", "Privacy notice", "How ARTÉ Properties uses the details you send through this website.", f'''
 <section class="band"><div class="wrap" style="max-width:760px"><h1>Privacy notice</h1>
 <p>When you send a form on this website we receive your name, contact details and message so that an adviser can reply to your enquiry. We use them only for that purpose and for related follow-up about properties you have asked about.</p>
 <p>We do not sell your details. Form submissions are stored by our website host and in our client records. You can ask us at any time to see, correct or delete what we hold by emailing <a href="mailto:{S["email"]}">{e(S["email"])}</a>.</p>
-<p>If you message us on WhatsApp, WhatsApp's own privacy policy also applies to that conversation.</p></div></section>''')
+<p>If you message us on WhatsApp, WhatsApp's own privacy policy also applies to that conversation.</p>
+<p>When you send a form we also record which link or advert brought you to the site (for example the campaign name), so we know which of our adverts are useful.</p>{COOKIE_TEXT}</div></section>''')
 
 pages["404.html"] = page("404.html", "Page not found", "This page could not be found.", f'''
 <section class="hero" style="min-height:70vh">{skyline(3)}<div class="wrap"><h1>This page has moved</h1><p class="lead">Our website has been rebuilt. Try the properties page or get in touch.</p>

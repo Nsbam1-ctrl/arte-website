@@ -16,5 +16,13 @@
   "title": "Director",
   "brn": "60407"
  },
- "market_source": "Dubai Land Department transactions via DXBinteract, November 2026"
+ "market_source": "Dubai Land Department transactions via DXBinteract, November 2026",
+ "tracking": {
+  "_note": "Leave blank until the accounts exist under info@55holding.com. While all are blank, no banner or tags are output.",
+  "gtm_id": "",
+  "ga4_id": "",
+  "ads_id": "",
+  "ads_lead_label": "",
+  "meta_pixel_id": ""
+ }
 }

@@ -71,7 +71,7 @@ $$('form[data-netlify]').forEach(form=>{
     note.className='note '+(ok?'ok':'err');
     note.innerHTML=ok?'Thank you. A member of the team will be in touch shortly.'
       :'We could not send this form from here. <a href="'+wa+'" target="_blank" rel="noopener">Send it on WhatsApp instead</a> or call <a href="tel:'+document.body.dataset.tel+'">'+document.body.dataset.phone+'</a>.';
-    if(ok)form.reset();
+    if(ok){window.arteEvent&&arteEvent('generate_lead',{form_name:form.getAttribute('name'),page:location.pathname});form.reset();document.querySelectorAll('input[data-utm]').forEach(i=>{try{const a=JSON.parse(sessionStorage.getItem('arte-attr')||'{}');if(a[i.name])i.value=a[i.name]}catch(_){}})}
   });
 });
 }
@@ -83,5 +83,50 @@ document.querySelectorAll('[data-carousel]').forEach(c=>{
   c.querySelector('.prev').addEventListener('click',()=>go(-1));c.querySelector('.next').addEventListener('click',()=>go(1));
   t.addEventListener('scroll',()=>{n.textContent=Math.round(t.scrollLeft/t.clientWidth)+1},{passive:true});
   c.tabIndex=0;c.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')go(-1);if(e.key==='ArrowRight')go(1)});
+});
+}
+{
+/* attribution: keep the first ad/link details for this visit and copy them into every lead form */
+const KEYS=['utm_source','utm_medium','utm_campaign','utm_term','utm_content','gclid','fbclid'];
+let a={};try{a=JSON.parse(sessionStorage.getItem('arte-attr')||'{}')}catch(_){}
+const q=new URLSearchParams(location.search);
+if(KEYS.some(k=>q.get(k))){a={};KEYS.forEach(k=>{if(q.get(k))a[k]=q.get(k)});a.landing_page=location.pathname}
+if(!a.landing_page)a.landing_page=location.pathname;
+try{sessionStorage.setItem('arte-attr',JSON.stringify(a))}catch(_){}
+document.querySelectorAll('input[data-utm]').forEach(i=>{if(a[i.name])i.value=a[i.name]});
+
+/* tracking: only when IDs are set in data/site.json, and only after the visitor accepts cookies */
+const T=window.ARTE_T;
+window.arteEvent=(name,params)=>{if(!T)return;try{dataLayer.push(Object.assign({event:name},params||{}))}catch(_){}
+  if(window.__arteOn){
+    if(T.ga4_id&&window.gtag)gtag('event',name,params||{});
+    if(name==='generate_lead'&&T.ads_id&&T.ads_lead_label&&window.gtag)gtag('event','conversion',{send_to:T.ads_id+'/'+T.ads_lead_label});
+    if(window.fbq)fbq('track',name==='generate_lead'?'Lead':'Contact',params||{});
+  }};
+if(T){
+  const load=src=>{const s=document.createElement('script');s.async=true;s.src=src;document.head.appendChild(s)};
+  const on=()=>{if(window.__arteOn)return;window.__arteOn=true;
+    gtag('consent','update',{ad_storage:'granted',analytics_storage:'granted',ad_user_data:'granted',ad_personalization:'granted'});
+    if(T.gtm_id){dataLayer.push({'gtm.start':Date.now(),event:'gtm.js'});load('https://www.googletagmanager.com/gtm.js?id='+T.gtm_id)}
+    const g=T.ga4_id||T.ads_id;
+    if(g){load('https://www.googletagmanager.com/gtag/js?id='+g);gtag('js',new Date());if(T.ga4_id)gtag('config',T.ga4_id);if(T.ads_id)gtag('config',T.ads_id)}
+    if(T.meta_pixel_id){!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init',T.meta_pixel_id);fbq('track','PageView')}
+  };
+  let choice=null;try{choice=localStorage.getItem('arte-consent')}catch(_){}
+  const save=v=>{try{localStorage.setItem('arte-consent',v)}catch(_){}};
+  const banner=()=>{if(document.querySelector('.cookie'))return;
+    const d=document.createElement('div');d.className='cookie';d.setAttribute('role','dialog');d.setAttribute('aria-label','Cookie choice');
+    d.innerHTML='<p>We use cookies from Google and Meta to see how the site is used and which adverts work. Nothing loads unless you accept. <a href="privacy.html">Privacy notice</a></p><div><button class="btn ghost sm" data-c="no">Decline</button><button class="btn sm" data-c="yes">Accept</button></div>';
+    d.addEventListener('click',ev=>{const c=ev.target.dataset&&ev.target.dataset.c;if(!c)return;
+      if(c==='yes'){save('granted');on()}else{const was=window.__arteOn;save('denied');if(was)location.reload()}d.remove()});
+    document.body.appendChild(d)};
+  if(choice==='granted')on();else if(choice!=='denied')banner();
+  document.querySelectorAll('[data-cookie-settings]').forEach(l=>l.addEventListener('click',ev=>{ev.preventDefault();banner()}));
+}
+/* click events */
+document.addEventListener('click',ev=>{const l=ev.target.closest&&ev.target.closest('a[href]');if(!l)return;
+  const h=l.getAttribute('href');
+  if(h.startsWith('https://wa.me/'))arteEvent('whatsapp_click',{page:location.pathname});
+  else if(h.startsWith('tel:'))arteEvent('phone_click',{page:location.pathname});
 });
 }

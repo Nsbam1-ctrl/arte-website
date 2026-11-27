@@ -183,3 +183,5 @@ footer a{text-decoration:none;display:block;padding:4px 0}footer a:hover{color:v
 .tab-sig[aria-selected=true]{background:var(--sand);color:#14110c;border-color:var(--sand)}
 .sig-band{background:linear-gradient(180deg,#0c0f11,#13110e);border-top:1px solid rgba(214,194,160,.18);border-bottom:1px solid rgba(214,194,160,.18)}
 .sig-band .card{background:#0f1214;border-color:rgba(214,194,160,.18)}
+.cookie{position:fixed;left:16px;right:16px;bottom:16px;z-index:60;max-width:560px;background:#101417;color:#e9e4da;border:1px solid rgba(233,228,218,.18);padding:18px 20px;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;box-shadow:0 12px 40px rgba(0,0,0,.45)}
+.cookie p{margin:0;font-size:14px;line-height:1.5;flex:1 1 260px}.cookie a{color:inherit;text-decoration:underline}.cookie div{display:flex;gap:10px}
